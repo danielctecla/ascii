@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>百合の花束</title>
+  <meta name="description" content="ASCIIで描いた百合の花束。">
+  <meta name="theme-color" content="#030204">
+  <meta property="og:title" content="百合の花束">
+  <meta property="og:description" content="ASCIIで描いた百合の花束。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23030204'/%3E%3Cg fill='%23ff8fab'%3E%3Ccircle cx='32' cy='18' r='10'/%3E%3Ccircle cx='46' cy='29' r='10'/%3E%3Ccircle cx='40' cy='45' r='10'/%3E%3Ccircle cx='24' cy='45' r='10'/%3E%3Ccircle cx='18' cy='29' r='10'/%3E%3C/g%3E%3Ccircle cx='32' cy='33' r='7' fill='%23ffd166'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Zen+Maru+Gothic:wght@500;900&display=swap">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div id="zona-segura" aria-hidden="true"></div>
+  <canvas id="escena" role="img" aria-label="ASCIIで描いた花束"></canvas>
+
+  <main id="panel" class="panel">
+    <h1 class="solo-lector">百合の花束</h1>
+    <p id="mensaje" class="mensaje" hidden></p>
+
+    <nav class="controles" aria-label="操作">
+      <button id="btn-otra-vez" type="button"><span class="icono" aria-hidden="true">↻</span>もういちど</button>
+    </nav>
+
+    <p class="pista">花や空をタッチしてね</p>
+  </main>
+
+  <noscript><p class="sin-js">JavaScriptを有効にしてください。</p></noscript>
+
+  <script src="js/flores.js"></script>
+</body>
+</html>

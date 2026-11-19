@@ -1,0 +1,78 @@
+# Publica la página en GitHub Pages cada vez que se sube algo a la rama main.
+# Requisito (una sola vez, en el repositorio de GitHub):
+#   Settings → Pages → Build and deployment → Source: «GitHub Actions»
+name: Publicar en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # permite lanzarlo a mano desde la pestaña Actions
+
+# Permisos mínimos que necesita el despliegue a Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un solo despliegue a la vez; si llega otro, espera en cola sin cancelar el que está en curso
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  comprobar:
+    name: Comprobar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+
+      - name: Revisar que el JavaScript no tenga errores de sintaxis
+        run: |
+          for archivo in js/*.js; do
+            node --check "$archivo"
+            echo "ok  $archivo"
+          done
+
+      - name: Revisar que existan los archivos que enlaza index.html
+        run: |
+          faltan=0
+          for ruta in $(grep -oE '(src|href)="(css|js)/[^"]+"' index.html | sed -E 's/^(src|href)="//; s/"$//'); do
+            if [ -f "$ruta" ]; then
+              echo "ok  $ruta"
+            else
+              echo "::error file=index.html::Falta el archivo $ruta"
+              faltan=1
+            fi
+          done
+          exit $faltan
+
+  publicar:
+    name: Publicar
+    needs: comprobar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v6
+
+      # Solo se publica lo que necesita la página
+      - name: Preparar los archivos del sitio
+        run: |
+          mkdir -p _site
+          cp -r index.html css js _site/
+          find _site -type f | sort
+
+      - name: Subir el sitio
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - name: Desplegar en GitHub Pages
+        id: despliegue
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,200 @@
+/* Primero móvil: el lienzo ocupa toda la pantalla (nombre, ramo y mensaje);
+   abajo, al alcance del pulgar, la línea del mensaje y dos botones. */
+:root {
+  --fondo: #030204;
+  --texto: #f6e9ee;
+  --tenue: #9a8893;
+  --muy-tenue: #574a53;
+  --rosa: #ff8fab;
+  --rosa-claro: #ffe5ec;
+  --oro: #ffd6a5;
+  --jp: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--jp);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+#escena {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* arrastrar el dedo crea viento en vez de mover la página */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Sirve para medir la muesca de arriba del móvil desde JavaScript */
+#zona-segura {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: env(safe-area-inset-top, 0px);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ---------- Panel inferior ---------- */
+.panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 6px;
+  padding-bottom: max(14px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  text-align: center;
+  pointer-events: none; /* los toques pasan al lienzo, salvo en los botones */
+}
+
+.mensaje {
+  margin: 0;
+  max-width: 30em;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  color: var(--tenue);
+  text-wrap: balance;
+  word-break: keep-all; /* el japonés solo se parte en los espacios, no a mitad de palabra */
+  line-break: strict;
+}
+
+.mensaje .saludo {
+  color: var(--rosa);
+  white-space: nowrap;
+}
+
+.mensaje .frase {
+  white-space: nowrap;
+  transition: color 0.6s, text-shadow 0.6s;
+}
+
+.mensaje .frase.activa {
+  color: var(--rosa-claro);
+  text-shadow: 0 0 12px rgba(255, 143, 171, 0.6);
+}
+
+.controles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.controles button {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--texto);
+  background: rgba(255, 143, 171, 0.06);
+  border: 1px solid rgba(255, 143, 171, 0.28);
+  border-radius: 999px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.controles button:active {
+  background: rgba(255, 143, 171, 0.18);
+}
+
+.controles button[aria-pressed="true"] {
+  border-color: var(--rosa);
+  background: rgba(255, 143, 171, 0.14);
+}
+
+.controles button:focus-visible {
+  outline: 2px solid var(--oro);
+  outline-offset: 2px;
+}
+
+.icono {
+  font-family: var(--mono);
+  color: var(--rosa);
+}
+
+.pista {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muy-tenue);
+  letter-spacing: 0.08em;
+  animation: desvanecer 1.2s ease 10s forwards;
+}
+
+@keyframes desvanecer {
+  to { opacity: 0; }
+}
+
+@media (hover: hover) {
+  .controles button:hover {
+    border-color: var(--rosa);
+  }
+}
+
+@media (min-width: 768px) {
+  .mensaje { font-size: 17px; }
+  .panel { gap: 12px; padding-bottom: max(20px, env(safe-area-inset-bottom, 0px)); }
+}
+
+/* Pantallas bajas (móvil en horizontal): más sitio para el ramo */
+@media (max-height: 520px) {
+  .pista { display: none; }
+  .panel { gap: 6px; padding-bottom: max(8px, env(safe-area-inset-bottom, 0px)); }
+  .mensaje { font-size: 13px; }
+  .controles button { min-height: 38px; }
+}
+
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.sin-js {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--tenue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mensaje .frase { transition: none; }
+}
